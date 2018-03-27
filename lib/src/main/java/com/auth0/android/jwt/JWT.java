@@ -41,6 +41,11 @@ public class JWT implements Parcelable {
         this.token = token;
     }
 
+    public JWT(@NonNull String token, Type type) {
+        decode(token, type);
+        this.token = token;
+    }
+
     /**
      * Get the Header values from this JWT as a Map of Strings.
      *
@@ -202,6 +207,15 @@ public class JWT implements Parcelable {
         }.getType();
         header = parseJson(base64Decode(parts[0]), mapType);
         payload = parseJson(base64Decode(parts[1]), JWTPayload.class);
+        signature = parts[2];
+    }
+
+    private void decode(String token, Type type) {
+        final String[] parts = splitToken(token);
+        Type mapType = new TypeToken<Map<String, String>>() {
+        }.getType();
+        header = parseJson(base64Decode(parts[0]), mapType);
+        payload = parseJson(base64Decode(parts[1]), type);
         signature = parts[2];
     }
 
